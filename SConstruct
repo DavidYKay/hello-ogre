@@ -34,6 +34,9 @@ if platform.name == "linux":
    if not conf.CheckLib('OgreMain'):
       print 'OgreMain library must be in path'
       Exit(1)
+   if not conf.CheckLib('OgreBites'):
+      print 'OgreBites library must be in path'
+      Exit(1)
    if not conf.CheckLib('OIS'):
       print 'OIS library must be in path'
       Exit(1)
@@ -46,6 +49,7 @@ main_program_list=Split("""
 # list of libraries needed for linking
 libs_list=Split("""
    OgreMain
+   OgreBites
    OIS
    """)
 
