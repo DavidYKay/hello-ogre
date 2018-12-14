@@ -1,5 +1,6 @@
 platform = ARGUMENTS.get('OS', Platform())
-mode = ARGUMENTS.get('mode', "release")
+#mode = ARGUMENTS.get('mode', "release")
+mode = ARGUMENTS.get('mode', "debug")
 
 listinc=[
    # our main include directory
