@@ -1,70 +1,50 @@
 #include <Ogre.h>
-#include <stdio.h>
-using namespace Ogre;
 
-//#if defined(_DEBUG)
-//    ogre->loadPlugin("Plugin_CgProgramManager_d");
-//    ogre->loadPlugin("Plugin_OctreeSceneManager_d");
-//#else
-//    ogre->loadPlugin("Plugin_CgProgramManager");
-//    ogre->loadPlugin("Plugin_OctreeSceneManager");
-//#endif
-
-void log(const char * s) {
-  printf("%s\n", s);
-}
-
-int main()
+int main(int argc, char *argv[])
 {
+	// the root
+	Ogre::Root *root = new Ogre::Root("", "");
 
-  log("making root");
+	// load the rendersystem
+  root->loadPlugin("/usr/lib64/OGRE/RenderSystem_GL");
+	root->setRenderSystem(*(root->getAvailableRenderers().begin()));
+	root->initialise(false);
 
-  //Root *root = new Root("plugins.cfg", "mygame.cfg", "mygame.log");
-  Root *root = new Root("", "");
-  //root->showConfigDialog();
+	// the window
+	Ogre::RenderWindow *window = root->createRenderWindow("Hello World!", 800, 600, false);
+	window->setActive(true);
+	window->setAutoUpdated(true);
+	window->setDeactivateOnFocusChange(false);
 
-  log("loading RenderSystem_GL");
+	Ogre::SceneManager *sceneMgr = root->createSceneManager(Ogre::ST_GENERIC);
 
-  try {
-    root->loadPlugin("/usr/lib64/OGRE/RenderSystem_GL");
-  }
-  catch(Exception& e) {
-    LogManager::getSingleton().logMessage(String("Unable to create OpenGL RenderSystem: ") + e.getFullDescription());
-  }
+	// viewport and camera
+	Ogre::Camera *camera = sceneMgr->createCamera("cam");
+	Ogre::Viewport *viewport = window->addViewport(camera);
+	viewport->setClearEveryFrame(true);
+	// TODO: set-up your camera
 
-  //try {
-  //  root->loadPlugin("/usr/lib64/OGRE/Plugin_CgProgramManager");
-  //}
-  //catch(Exception& e) {
-  //  LogManager::getSingleton().logMessage(String("Unable to create CG Program manager RenderSystem: ") + e.getFullDescription());
-  //}
+	// TODO: set-up your resources
 
-  log("getting available renderers");
-  Ogre::RenderSystemList renderSystems = root->getAvailableRenderers();
-  Ogre::RenderSystemList::const_iterator r_it = renderSystems.begin();
+	// TODO: set-up your lighting
 
-  log("setting RendererSystem");
-  root->setRenderSystem(*r_it);
+	// TODO: create your objects
 
-  log("initializing OGRE");
-  root->initialise(false);
+	// main loop
+	while (true)
+	{
+		// TODO: do your game logic here
 
-  log("getting window");
-  RenderWindow *window = root->getAutoCreatedWindow();
+		Ogre::WindowEventUtilities::messagePump();
 
-  log("creating scene manager");
-  SceneManager *smgr = root->createSceneManager(ST_GENERIC, "SceneManager");
+		if (!root->renderOneFrame())
+			break;
+	}
 
-  log("creating camera");
-  Camera *cam = smgr->createCamera("MainCamera");
+	// clean up
+	delete root;
 
-  log("adding viewPort");
-  Viewport *vp = window->addViewport(cam);
-  vp->setBackgroundColour(ColourValue(0.3, 0.6, 0.9));
-
-  log("startRendering");
-  root->startRendering();
-
-  return 0;
+	// the end.
+	return 0;
 }
 
