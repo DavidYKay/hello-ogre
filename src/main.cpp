@@ -1,6 +1,8 @@
 #include <Ogre.h>
 #include <OgreColourValue.h>
 
+using namespace Ogre;
+
 ManualObject* createCubeMesh(Ogre::String name, Ogre::String matName) {
   ManualObject* cube = new ManualObject(name);
   cube->begin(matName);
@@ -42,6 +44,8 @@ int main(int argc, char *argv[])
   // the root
   Ogre::Root *root = new Ogre::Root("", "");
 
+  root->loadPlugin("/usr/lib64/OGRE/Codec_STBI");
+
   // load the rendersystem
   root->loadPlugin("/usr/lib64/OGRE/RenderSystem_GL");
   root->setRenderSystem(*(root->getAvailableRenderers().begin()));
@@ -55,28 +59,48 @@ int main(int argc, char *argv[])
 
   Ogre::SceneManager *sceneMgr = root->createSceneManager(Ogre::ST_GENERIC);
 
-  // viewport and camera
+  // TODO: configure camera
   Ogre::Camera *camera = sceneMgr->createCamera("cam");
+
+  // Viewport
   Ogre::Viewport *viewport = window->addViewport(camera);
   viewport->setClearEveryFrame(true);
   viewport->setBackgroundColour(Ogre::ColourValue(0.3, 0.6, 0.9));
 
-  // TODO: set-up your camera
-
   // TODO: set-up your resources
 
-  SceneNode* mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-  mNode->setPosition(0,0.5,0);
-  mNode->attachObject(createCubeMesh("Cube", "myMaterial"));
+  // SceneNode* mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+  // mNode->setPosition(0,0.5,0);
+  // mNode->attachObject(createCubeMesh("Cube", "myMaterial"));
+  //ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media", "FileSystem", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, true);
 
-  // TODO: set-up your lighting
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/materials/textures", "FileSystem");
 
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/materials/programs/GLSL", "FileSystem");
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/materials/programs/GLSL120", "FileSystem");
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/materials/programs/GLSL150", "FileSystem");
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/materials/programs/GLSL400", "FileSystem");
+
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/RTShaderLib/GLSL", "FileSystem");
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/PBR", "FileSystem");
+
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/materials/scripts", "FileSystem");
+  ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/models", "FileSystem");
+  //ResourceGroupManager::getSingleton().addResourceLocation("/usr/share/OGRE/Media/materials", "FileSystem", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, true);
+  ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
+  Entity* ogreEntity  = sceneMgr->createEntity("Ogre Head", "ogrehead.mesh");
+  SceneNode* ogreNode = sceneMgr->getRootSceneNode()->createChildSceneNode();
+  ogreNode->attachObject(ogreEntity);
+
+  // set-up your lighting
+  sceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
 
   // main loop
   while (true) {
     // TODO: do your game logic here
 
-    Ogre::WindowEventUtilities::messagePump();
+    //Ogre::WindowEventUtilities::messagePump();
 
     if (!root->renderOneFrame())
       break;
