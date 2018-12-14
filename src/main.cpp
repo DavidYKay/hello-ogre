@@ -1,5 +1,6 @@
 #include <Ogre.h>
 #include <OgreColourValue.h>
+#include <Bites/OgreWindowEventUtilities.h>
 
 using namespace Ogre;
 
@@ -39,8 +40,7 @@ ManualObject* createCubeMesh(Ogre::String name, Ogre::String matName) {
   return cube;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   // the root
   Ogre::Root *root = new Ogre::Root("", "");
 
@@ -62,10 +62,18 @@ int main(int argc, char *argv[])
   // TODO: configure camera
   Ogre::Camera *camera = sceneMgr->createCamera("cam");
 
+  camera->setPosition(0, 0, 80);
+  camera->lookAt(0, 0, -300);
+  camera->setNearClipDistance(5);
+
   // Viewport
   Ogre::Viewport *viewport = window->addViewport(camera);
-  viewport->setClearEveryFrame(true);
+  //viewport->setClearEveryFrame(true);
   viewport->setBackgroundColour(Ogre::ColourValue(0.3, 0.6, 0.9));
+
+  camera->setAspectRatio(
+      Ogre::Real(viewport->getActualWidth()) /
+      Ogre::Real(viewport->getActualHeight()));
 
   // TODO: set-up your resources
 
@@ -95,12 +103,14 @@ int main(int argc, char *argv[])
 
   // set-up your lighting
   sceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+  Ogre::Light* light = sceneMgr->createLight("MainLight");
+  light->setPosition(20, 80, 50);
 
   // main loop
   while (true) {
     // TODO: do your game logic here
 
-    //Ogre::WindowEventUtilities::messagePump();
+    OgreBites::WindowEventUtilities::messagePump();
 
     if (!root->renderOneFrame())
       break;
