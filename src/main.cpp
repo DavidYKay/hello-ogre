@@ -1,15 +1,6 @@
 #include <Ogre.h>
+#include <stdio.h>
 using namespace Ogre;
-
-void loadRenderSystems() {
-  Root* ogreRoot = Root::getSingletonPtr();
-
-  try {
-    ogreRoot->loadPlugin("RenderSystem_GL");
-  }
-  catch(Exception& e) {
-    LogManager::getSingleton().logMessage(String("Unable to create OpenGL RenderSystem: ") + e.getFullDescription());
-  }
 
 //#if defined(_DEBUG)
 //    ogre->loadPlugin("Plugin_CgProgramManager_d");
@@ -19,29 +10,32 @@ void loadRenderSystems() {
 //    ogre->loadPlugin("Plugin_OctreeSceneManager");
 //#endif
 
-  try {
-    ogreRoot->loadPlugin("Plugin_CgProgramManager");
-  }
-  catch(Exception& e) {
-    LogManager::getSingleton().logMessage(String("Unable to create CG Program manager RenderSystem: ") + e.getFullDescription());
-  }
-
-  Ogre::RenderSystemList renderSystems = ogreRoot->getAvailableRenderers();
-  Ogre::RenderSystemList::const_iterator r_it = renderSystems.begin();
-  ogreRoot->setRenderSystem(*r_it);
-}
-//'const RenderSystemList  {aka const std::vector<Ogre::RenderSystem*, Ogre::STLAllocator<Ogre::RenderSystem*, Ogre::CategorisedAllocPolicy<(Ogre::MemoryCategory)0> > >}'
-//'Ogre::RenderSystemList* {aka       std::vector<Ogre::RenderSystem*, Ogre::STLAllocator<Ogre::RenderSystem*, Ogre::CategorisedAllocPolicy<(Ogre::MemoryCategory)0> > >*}'
-//in assignment
 
 int main()
 {
-    Root *root = new Root("plugins.cfg", "mygame.cfg", "mygame.log");
+    //Root *root = new Root("plugins.cfg", "mygame.cfg", "mygame.log");
+    Root *root = new Root("", "");
     //root->showConfigDialog();
 
-    loadRenderSystems();
+    try {
+      root->loadPlugin("/usr/lib64/OGRE/RenderSystem_GL");
+    }
+    catch(Exception& e) {
+      LogManager::getSingleton().logMessage(String("Unable to create OpenGL RenderSystem: ") + e.getFullDescription());
+    }
 
-    root->initialise(true, "My Game");
+    //try {
+    //  root->loadPlugin("/usr/lib64/OGRE/Plugin_CgProgramManager");
+    //}
+    //catch(Exception& e) {
+    //  LogManager::getSingleton().logMessage(String("Unable to create CG Program manager RenderSystem: ") + e.getFullDescription());
+    //}
+
+    Ogre::RenderSystemList renderSystems = root->getAvailableRenderers();
+    Ogre::RenderSystemList::const_iterator r_it = renderSystems.begin();
+    root->setRenderSystem(*r_it);
+
+    root->initialise(false);
     RenderWindow *window = root->getAutoCreatedWindow();
 
     SceneManager *smgr = root->createSceneManager(ST_GENERIC, "SceneManager");
